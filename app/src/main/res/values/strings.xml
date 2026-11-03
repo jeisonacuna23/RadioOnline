@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Radio Online</string>
+    <string name="btn_play">ESCUCHAR</string>
+    <string name="btn_stop">DETENER</string>
+    <string name="status_offline">FUERA DEL AIRE</string>
+    <string name="status_online">EN VIVO</string>
+</resources>
