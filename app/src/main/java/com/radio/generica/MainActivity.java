@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
@@ -31,6 +33,11 @@ public class MainActivity extends AppCompatActivity {
     private ListenableFuture<MediaController> controllerFuture;
     
     private final String RADIO_URL = "https://radio.conectarservidor.com:8016/stream";
+    
+    // Variables para el Watchdog (vigilante de señal)
+    private Handler watchdogHandler = new Handler(Looper.getMainLooper());
+    private long lastKnownPosition = 0;
+    private Runnable watchdogRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 mediaController = controllerFuture.get();
                 configurarControles();
+                iniciarWatchdog();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -65,6 +73,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void iniciarWatchdog() {
+        watchdogRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (mediaController != null && mediaController.isPlaying()) {
+                    long currentPosition = mediaController.getCurrentPosition();
+                    
+                    // Si la posición no avanza en 5 segundos, el stream se cortó
+                    if (currentPosition == lastKnownPosition) {
+                        mediaController.stop();
+                        runOnUiThread(() -> {
+                            tvSongTitle.setText("Señal perdida");
+                            visualizerView.stopAnimation();
+                        });
+                    }
+                    lastKnownPosition = currentPosition;
+                } else {
+                    lastKnownPosition = 0;
+                }
+                watchdogHandler.postDelayed(this, 5000); // Revisar cada 5 segundos
+            }
+        };
+        watchdogHandler.post(watchdogRunnable);
+    }
+
     private void configurarControles() {
         fabPlayStop.setOnClickListener(v -> {
             if (mediaController != null) {
@@ -73,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     mediaController.prepare();
                     mediaController.play();
+                    lastKnownPosition = 0; // Reiniciar el vigilante al dar play
                 }
             }
         });
@@ -128,5 +162,6 @@ public class MainActivity extends AppCompatActivity {
         if (mediaController != null) {
             mediaController.release();
         }
+        watchdogHandler.removeCallbacks(watchdogRunnable);
     }
 }

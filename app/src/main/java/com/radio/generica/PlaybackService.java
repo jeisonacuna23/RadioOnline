@@ -6,6 +6,7 @@ import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.Player;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
@@ -18,19 +19,20 @@ public class PlaybackService extends MediaSessionService {
     public void onCreate() {
         super.onCreate();
         
+        // 1. Desactivamos la repetición y configuramos para que sea un stream en vivo
         ExoPlayer player = new ExoPlayer.Builder(this)
                 .setAudioAttributes(new AudioAttributes.Builder()
                         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                         .setUsage(C.USAGE_MEDIA)
                         .build(), true)
                 .setHandleAudioBecomingNoisy(true)
+                .setRepeatMode(Player.REPEAT_MODE_OFF) // No repetir nunca
                 .build();
 
         mediaSession = new MediaSession.Builder(this, player)
                 .setId("RadioOnlineSession")
                 .build();
                 
-        // Aquí configuramos la estética de la notificación
         Uri artworkUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.logo);
         
         MediaItem mediaItem = new MediaItem.Builder()
@@ -38,7 +40,7 @@ public class PlaybackService extends MediaSessionService {
                 .setMediaMetadata(new MediaMetadata.Builder()
                         .setTitle("A Voz en Cuello")
                         .setArtist("En Vivo")
-                        .setArtworkUri(artworkUri) // Ponemos tu logo como carátula
+                        .setArtworkUri(artworkUri)
                         .build())
                 .build();
                 
