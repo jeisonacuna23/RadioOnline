@@ -10,6 +10,8 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.common.MediaMetadata;
+import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaController;
 import androidx.media3.session.SessionToken;
@@ -53,13 +55,11 @@ public class MainActivity extends AppCompatActivity {
             }
         }, MoreExecutors.directExecutor());
 
-        // Lógica del botón Apagar y Salir
         btnExit.setOnClickListener(v -> {
             if (mediaController != null) {
                 mediaController.stop();
                 mediaController.release();
             }
-            // Cierra la app por completo
             finishAffinity();
             System.exit(0);
         });
@@ -77,17 +77,17 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         
-        mediaController.addListener(new androidx.media3.common.Player.Listener() {
+        mediaController.addListener(new Player.Listener() {
             @Override
             public void onPlaybackStateChanged(int playbackState) {
                 runOnUiThread(() -> {
-                    if (playbackState == androidx.media3.common.Player.STATE_BUFFERING) {
+                    if (playbackState == Player.STATE_BUFFERING) {
                         progressBar.setVisibility(View.VISIBLE);
                         fabPlayStop.setImageResource(R.drawable.ic_pause);
                         tvSongTitle.setText("Conectando...");
-                    } else if (playbackState == androidx.media3.common.Player.STATE_READY) {
+                    } else if (playbackState == Player.STATE_READY) {
                         progressBar.setVisibility(View.GONE);
-                    } else if (playbackState == androidx.media3.common.Player.STATE_IDLE) {
+                    } else if (playbackState == Player.STATE_IDLE) {
                         progressBar.setVisibility(View.GONE);
                         fabPlayStop.setImageResource(R.drawable.ic_play);
                         tvSongTitle.setText("Radio Detenida");
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onMediaMetadataChanged(androidx.media3.common.MediaMetadata mediaMetadata) {
+            public void onMediaMetadataChanged(MediaMetadata mediaMetadata) {
                 runOnUiThread(() -> {
                     if (mediaMetadata.title != null) {
                         tvSongTitle.setText(mediaMetadata.title);
