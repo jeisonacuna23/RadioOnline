@@ -22,10 +22,12 @@
             </intent-filter>
         </activity>
         
+        <!-- Aquí agregamos el ícono de la notificación -->
         <service
             android:name=".PlaybackService"
             android:foregroundServiceType="mediaPlayback"
-            android:exported="true">
+            android:exported="true"
+            android:icon="@drawable/ic_notification">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaSessionService" />
             </intent-filter>

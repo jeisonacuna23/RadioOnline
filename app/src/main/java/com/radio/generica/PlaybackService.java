@@ -1,5 +1,6 @@
 package com.radio.generica;
 
+import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
 import androidx.media3.common.C;
@@ -29,11 +30,15 @@ public class PlaybackService extends MediaSessionService {
                 .setId("RadioOnlineSession")
                 .build();
                 
+        // Aquí configuramos la estética de la notificación
+        Uri artworkUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.logo);
+        
         MediaItem mediaItem = new MediaItem.Builder()
                 .setUri(STREAM_URL)
                 .setMediaMetadata(new MediaMetadata.Builder()
-                        .setTitle("En Vivo")
-                        .setArtist("A Voz en Cuello")
+                        .setTitle("A Voz en Cuello")
+                        .setArtist("En Vivo")
+                        .setArtworkUri(artworkUri) // Ponemos tu logo como carátula
                         .build())
                 .build();
                 
