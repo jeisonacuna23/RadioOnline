@@ -6,7 +6,6 @@ import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.session.MediaController;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 
@@ -43,7 +42,7 @@ public class PlaybackService extends MediaSessionService {
 
     @Nullable
     @Override
-    public MediaSession onGetSession(MediaController.ControllerInfo controllerInfo) {
+    public MediaSession onGetSession(MediaSession.ControllerInfo controllerInfo) {
         return mediaSession;
     }
 
