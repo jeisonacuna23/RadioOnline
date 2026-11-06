@@ -1,40 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:background="#121212"
-    android:padding="32dp">
+    android:background="@drawable/bg_gradient"
+    android:padding="24dp">
 
+    <!-- Encabezado / Nombre de la Emisora -->
     <TextView
+        android:id="@+id/tvStationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
+        android:text="A VOZ EN CUELLO"
         android:textColor="#FFFFFF"
-        android:textSize="32sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="48dp" />
-
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/status_offline"
-        android:textColor="#FF5252"
         android:textSize="18sp"
-        android:layout_marginBottom="32dp" />
+        android:textStyle="bold"
+        android:letterSpacing="0.25"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="32dp"/>
 
-    <Button
-        android:id="@+id/btnPlayStop"
+    <!-- Tarjeta con el Logo -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardLogo"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:text="@string/btn_play"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:backgroundTint="#4CAF50"
-        android:textColor="#FFFFFF"
-        android:insetTop="0dp"
-        android:insetBottom="0dp" />
+        app:cardCornerRadius="32dp"
+        app:cardElevation="20dp"
+        app:cardBackgroundColor="#1C0E1C"
+        app:strokeColor="#FFFFFF" 
+        app:strokeWidth="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvStationName"
+        android:layout_marginTop="24dp">
 
-</LinearLayout>
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo"
+            android:padding="16dp"/>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Texto de la cancion actual -->
+    <TextView
+        android:id="@+id/tvSongTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Conectando..."
+        android:textColor="#B3FFFFFF"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:fontFamily="sans-serif-light"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardLogo"
+        android:layout_marginTop="16dp"
+        android:layout_marginHorizontal="24dp"/>
+
+    <!-- Espectro de Audio -->
+    <com.radio.generica.VisualizerView
+        android:id="@+id/visualizer"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSongTitle"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Rueda de carga -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="#FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/visualizer"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Boton Principal de Play/Stop -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabPlayStop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_play"
+        app:backgroundTint="#331A33"
+        app:tint="#FFFFFF"
+        app:fabSize="normal"
+        app:maxImageSize="36dp"
+        app:elevation="16dp"
+        app:layout_constraintBottom_toTopOf="@id/tvVerse"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        app:layout_constraintVertical_bias="0.5"/>
+
+    <!-- El Versículo Bíblico -->
+    <TextView
+        android:id="@+id/tvVerse"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Clama a voz en cuello, no te detengas;\nalza tu voz como trompeta.\nIsaías 58:1"
+        android:textColor="#B3FFFFFF"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:fontFamily="serif"
+        android:fontStyle="italic"
+        android:lineSpacingExtra="4dp"
+        app:layout_constraintBottom_toTopOf="@id/btnExit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="24dp"
+        android:layout_marginHorizontal="24dp"/>
+
+    <!-- Boton de Apagar y Salir -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnExit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="APAGAR Y SALIR"
+        android:textColor="#FF5252"
+        app:backgroundTint="#00000000"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginBottom="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
