@@ -19,15 +19,18 @@ public class PlaybackService extends MediaSessionService {
     public void onCreate() {
         super.onCreate();
         
-        // 1. Desactivamos la repetición y configuramos para que sea un stream en vivo
+        // 1. Crear el reproductor (sin setRepeatMode en el builder)
         ExoPlayer player = new ExoPlayer.Builder(this)
                 .setAudioAttributes(new AudioAttributes.Builder()
                         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                         .setUsage(C.USAGE_MEDIA)
                         .build(), true)
                 .setHandleAudioBecomingNoisy(true)
-                .setRepeatMode(Player.REPEAT_MODE_OFF) // No repetir nunca
                 .build();
+
+        // 2. Aplicar la configuración directamente al reproductor
+        player.setRepeatMode(Player.REPEAT_MODE_OFF);
+        player.setPauseAtEndOfMediaItems(true);
 
         mediaSession = new MediaSession.Builder(this, player)
                 .setId("RadioOnlineSession")
