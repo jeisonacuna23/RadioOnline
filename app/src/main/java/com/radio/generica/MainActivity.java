@@ -1,8 +1,11 @@
 package com.radio.generica;
 
+import android.Manifest;
 import android.content.ComponentName;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,8 +13,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
@@ -20,6 +26,7 @@ import androidx.media3.session.SessionToken;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 @OptIn(markerClass = UnstableApi.class)
 public class MainActivity extends AppCompatActivity {
@@ -34,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     
     private final String RADIO_URL = "https://radio.conectarservidor.com:8016/stream";
     
-    // Variables para el Watchdog (vigilante de señal)
     private Handler watchdogHandler = new Handler(Looper.getMainLooper());
     private long lastKnownPosition = 0;
     private Runnable watchdogRunnable;
@@ -49,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
         tvSongTitle = findViewById(R.id.tvSongTitle);
         progressBar = findViewById(R.id.progressBar);
         visualizerView = findViewById(R.id.visualizer);
+
+        // 1. Pedir permisos de notificaciones (Android 13+)
+        pedirPermisoNotificaciones();
+
+        // 2. Suscribirse al canal de Firebase
+        FirebaseMessaging.getInstance().subscribeToTopic("radio_en_vivo")
+                .addOnCompleteListener(task -> {
+                    // Se ejecuta cuando la suscripción termina (opcional para debug)
+                });
 
         SessionToken sessionToken = new SessionToken(this, new ComponentName(this, PlaybackService.class));
         controllerFuture = new MediaController.Builder(this, sessionToken).buildAsync();
@@ -73,6 +88,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void pedirPermisoNotificaciones() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.POST_NOTIFICATIONS}, 101);
+            }
+        }
+    }
+
     private void iniciarWatchdog() {
         watchdogRunnable = new Runnable() {
             @Override
@@ -80,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
                 if (mediaController != null && mediaController.isPlaying()) {
                     long currentPosition = mediaController.getCurrentPosition();
                     
-                    // Si la posición no avanza en 5 segundos, el stream se cortó
                     if (currentPosition == lastKnownPosition) {
                         mediaController.stop();
                         runOnUiThread(() -> {
@@ -92,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     lastKnownPosition = 0;
                 }
-                watchdogHandler.postDelayed(this, 5000); // Revisar cada 5 segundos
+                watchdogHandler.postDelayed(this, 5000);
             }
         };
         watchdogHandler.post(watchdogRunnable);
@@ -106,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     mediaController.prepare();
                     mediaController.play();
-                    lastKnownPosition = 0; // Reiniciar el vigilante al dar play
+                    lastKnownPosition = 0;
                 }
             }
         });

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "400916519534",
+    "project_id": "radiomixer-proyecto",
+    "storage_bucket": "radiomixer-proyecto.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400916519534:android:7690f03cd7a0df880d647f",
+        "android_client_info": {
+          "package_name": "com.radio.generica"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUH5bv__wrDGAEAnwerObhbbOk73Dz0kU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400916519534:android:b7fd2f55d877f3770d647f",
+        "android_client_info": {
+          "package_name": "com.turadio.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUH5bv__wrDGAEAnwerObhbbOk73Dz0kU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
