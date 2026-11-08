@@ -9,6 +9,10 @@ import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.datasource.DefaultDataSource;
+import androidx.media3.datasource.DefaultHttpDataSource;
+import androidx.media3.exoplayer.source.DefaultLoadErrorHandlingPolicy;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 
@@ -20,7 +24,23 @@ public class PlaybackService extends MediaSessionService {
     public void onCreate() {
         super.onCreate();
         
+        // 1. Configurar la red para que falle rápido si no hay datos
+        DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory()
+                .setConnectTimeoutMs(5000)
+                .setReadTimeoutMs(5000);
+
+        DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(this, httpDataSourceFactory);
+
+        // 2. Política de errores: Cero reintentos. Si falla, se detiene.
+        DefaultLoadErrorHandlingPolicy policy = new DefaultLoadErrorHandlingPolicy() {
+            @Override
+            public long getRetryDelayMsFor(LoadErrorInfo loadErrorInfo) {
+                return C.TIME_UNSET; // No reintentar nunca
+            }
+        };
+
         ExoPlayer player = new ExoPlayer.Builder(this)
+                .setMediaSourceFactory(new DefaultMediaSourceFactory(dataSourceFactory).setLoadErrorHandlingPolicy(policy))
                 .setAudioAttributes(new AudioAttributes.Builder()
                         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
                         .setUsage(C.USAGE_MEDIA)
@@ -30,7 +50,6 @@ public class PlaybackService extends MediaSessionService {
 
         player.setRepeatMode(Player.REPEAT_MODE_OFF);
         
-        // EL DETECTOR DE ERRORES: Si hay un corte de red, apaga el reproductor inmediatamente
         player.addListener(new Player.Listener() {
             @Override
             public void onPlayerError(PlaybackException error) {

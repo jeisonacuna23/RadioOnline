@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
     
     private Handler watchdogHandler = new Handler(Looper.getMainLooper());
     private Runnable watchdogRunnable;
-    private int bufferingCount = 0;
+    private long lastPosition = 0;
+    private int stuckCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,23 +118,32 @@ public class MainActivity extends AppCompatActivity {
         watchdogRunnable = new Runnable() {
             @Override
             public void run() {
-                if (mediaController != null) {
-                    // Si el reproductor está intentando cargar sin éxito
-                    if (mediaController.getPlaybackState() == Player.STATE_BUFFERING) {
-                        bufferingCount++;
-                        if (bufferingCount > 3) { // 3 revisiones * 5 seg = 15 segundos atascado
+                if (mediaController != null && mediaController.isPlaying()) {
+                    long currentPosition = mediaController.getCurrentPosition();
+                    
+                    // Si la posición no avanza, el buffer está atascado
+                    if (currentPosition == lastPosition) {
+                        stuckCounter++;
+                        if (stuckCounter >= 2) { // 2 ciclos de 3 segundos = 6 segundos atascado
                             mediaController.stop();
-                            bufferingCount = 0;
-                            tvSongTitle.setText("Señal perdida");
-                            visualizerView.stopAnimation();
-                            fabPlayStop.setImageResource(R.drawable.ic_play);
-                            fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
+                            mediaController.clearMediaItems(); // Limpiamos la memoria a la fuerza
+                            stuckCounter = 0;
+                            runOnUiThread(() -> {
+                                tvSongTitle.setText("Señal perdida");
+                                visualizerView.stopAnimation();
+                                fabPlayStop.setImageResource(R.drawable.ic_play);
+                                fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
+                            });
                         }
                     } else {
-                        bufferingCount = 0; // Si carga bien, reiniciamos el contador
+                        stuckCounter = 0; // Avanzó, todo bien
                     }
+                    lastPosition = currentPosition;
+                } else {
+                    lastPosition = 0;
+                    stuckCounter = 0;
                 }
-                watchdogHandler.postDelayed(this, 5000); // Revisar cada 5 segundos
+                watchdogHandler.postDelayed(this, 3000); // Revisar cada 3 segundos
             }
         };
         watchdogHandler.post(watchdogRunnable);
@@ -145,7 +155,13 @@ public class MainActivity extends AppCompatActivity {
                 if (mediaController.isPlaying()) {
                     mediaController.pause();
                 } else {
-                    bufferingCount = 0;
+                    // Si la lista está vacía (porque el vigilante la borró), volvemos a cargar la URL
+                    if (mediaController.getMediaItemCount() == 0) {
+                        androidx.media3.common.MediaItem mediaItem = androidx.media3.common.MediaItem.fromUri(RADIO_URL);
+                        mediaController.setMediaItem(mediaItem);
+                    }
+                    stuckCounter = 0;
+                    lastPosition = 0;
                     mediaController.prepare();
                     mediaController.play();
                 }
