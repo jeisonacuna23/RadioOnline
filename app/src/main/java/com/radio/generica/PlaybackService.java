@@ -7,6 +7,7 @@ import androidx.media3.common.C;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
+import androidx.media3.common.PlaybackException;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
@@ -19,7 +20,6 @@ public class PlaybackService extends MediaSessionService {
     public void onCreate() {
         super.onCreate();
         
-        // 1. Crear el reproductor (sin setRepeatMode en el builder)
         ExoPlayer player = new ExoPlayer.Builder(this)
                 .setAudioAttributes(new AudioAttributes.Builder()
                         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
@@ -28,9 +28,16 @@ public class PlaybackService extends MediaSessionService {
                 .setHandleAudioBecomingNoisy(true)
                 .build();
 
-        // 2. Aplicar la configuración directamente al reproductor
         player.setRepeatMode(Player.REPEAT_MODE_OFF);
-        player.setPauseAtEndOfMediaItems(true);
+        
+        // EL DETECTOR DE ERRORES: Si hay un corte de red, apaga el reproductor inmediatamente
+        player.addListener(new Player.Listener() {
+            @Override
+            public void onPlayerError(PlaybackException error) {
+                player.stop();
+                player.clearMediaItems();
+            }
+        });
 
         mediaSession = new MediaSession.Builder(this, player)
                 .setId("RadioOnlineSession")

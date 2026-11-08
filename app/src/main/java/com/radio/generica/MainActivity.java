@@ -18,7 +18,6 @@ import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
 import androidx.media3.session.MediaController;
@@ -48,8 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private final String RADIO_URL = "https://radio.conectarservidor.com:8016/stream";
     
     private Handler watchdogHandler = new Handler(Looper.getMainLooper());
-    private long lastKnownPosition = 0;
     private Runnable watchdogRunnable;
+    private int bufferingCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,13 +61,8 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         visualizerView = findViewById(R.id.visualizer);
 
-        // 1. Pedir permisos de notificaciones (Android 13+)
         pedirPermisoNotificaciones();
-
-        // 2. Suscribirse al canal de Firebase (Push Notifications)
         FirebaseMessaging.getInstance().subscribeToTopic("radio_en_vivo");
-
-        // 3. Iniciar la escucha de la Base de Datos (Nombre de la canción en tiempo real)
         iniciarEscuchaBaseDeDatos();
 
         SessionToken sessionToken = new SessionToken(this, new ComponentName(this, PlaybackService.class));
@@ -95,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void iniciarEscuchaBaseDeDatos() {
-        // Conectamos a la URL de la base de datos de tu proyecto
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://radiomixer-proyecto-default-rtdb.firebaseio.com/");
         databaseReference = database.getReference("now_playing");
 
@@ -107,11 +100,8 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> tvSongTitle.setText(titulo));
                 }
             }
-
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                runOnUiThread(() -> tvSongTitle.setText("Error al leer canción"));
-            }
+            public void onCancelled(@NonNull DatabaseError error) { }
         });
     }
 
@@ -127,21 +117,23 @@ public class MainActivity extends AppCompatActivity {
         watchdogRunnable = new Runnable() {
             @Override
             public void run() {
-                if (mediaController != null && mediaController.isPlaying()) {
-                    long currentPosition = mediaController.getCurrentPosition();
-                    
-                    if (currentPosition == lastKnownPosition) {
-                        mediaController.stop();
-                        runOnUiThread(() -> {
+                if (mediaController != null) {
+                    // Si el reproductor está intentando cargar sin éxito
+                    if (mediaController.getPlaybackState() == Player.STATE_BUFFERING) {
+                        bufferingCount++;
+                        if (bufferingCount > 3) { // 3 revisiones * 5 seg = 15 segundos atascado
+                            mediaController.stop();
+                            bufferingCount = 0;
                             tvSongTitle.setText("Señal perdida");
                             visualizerView.stopAnimation();
-                        });
+                            fabPlayStop.setImageResource(R.drawable.ic_play);
+                            fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
+                        }
+                    } else {
+                        bufferingCount = 0; // Si carga bien, reiniciamos el contador
                     }
-                    lastKnownPosition = currentPosition;
-                } else {
-                    lastKnownPosition = 0;
                 }
-                watchdogHandler.postDelayed(this, 5000);
+                watchdogHandler.postDelayed(this, 5000); // Revisar cada 5 segundos
             }
         };
         watchdogHandler.post(watchdogRunnable);
@@ -153,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
                 if (mediaController.isPlaying()) {
                     mediaController.pause();
                 } else {
+                    bufferingCount = 0;
                     mediaController.prepare();
                     mediaController.play();
-                    lastKnownPosition = 0;
                 }
             }
         });
@@ -167,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                     if (playbackState == Player.STATE_BUFFERING) {
                         progressBar.setVisibility(View.VISIBLE);
                         fabPlayStop.setImageResource(R.drawable.ic_pause);
-                        tvSongTitle.setText("Conectando...");
                     } else if (playbackState == Player.STATE_READY) {
                         progressBar.setVisibility(View.GONE);
                     } else if (playbackState == Player.STATE_IDLE) {
