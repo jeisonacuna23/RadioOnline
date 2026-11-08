@@ -8,11 +8,12 @@ import androidx.media3.common.MediaItem;
 import androidx.media3.common.MediaMetadata;
 import androidx.media3.common.Player;
 import androidx.media3.common.PlaybackException;
-import androidx.media3.exoplayer.ExoPlayer;
-import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
 import androidx.media3.datasource.DefaultDataSource;
 import androidx.media3.datasource.DefaultHttpDataSource;
-import androidx.media3.exoplayer.source.DefaultLoadErrorHandlingPolicy;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy;
+import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
 
@@ -31,10 +32,10 @@ public class PlaybackService extends MediaSessionService {
 
         DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(this, httpDataSourceFactory);
 
-        // 2. Política de errores: Cero reintentos. Si falla, se detiene.
-        DefaultLoadErrorHandlingPolicy policy = new DefaultLoadErrorHandlingPolicy() {
+        // 2. Política de errores: Cero reintentos.
+        LoadErrorHandlingPolicy policy = new DefaultLoadErrorHandlingPolicy() {
             @Override
-            public long getRetryDelayMsFor(LoadErrorInfo loadErrorInfo) {
+            public long getRetryDelayMsFor(LoadErrorHandlingPolicy.LoadErrorInfo loadErrorInfo) {
                 return C.TIME_UNSET; // No reintentar nunca
             }
         };
