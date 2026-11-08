@@ -11,8 +11,8 @@ android {
         applicationId "com.radio.generica"
         minSdk 24
         targetSdk 34
-        versionCode 6
-        versionName "1.5"
+        versionCode 7
+        versionName "1.6"
     }
 
     signingConfigs {
@@ -44,7 +44,8 @@ dependencies {
     implementation 'androidx.media3:media3-session:1.2.0'
     implementation 'androidx.media3:media3-common:1.2.0'
     
-    // Dependencias de Firebase para notificaciones Push
+    // Dependencias de Firebase (Mensajería y Base de Datos)
     implementation platform('com.google.firebase:firebase-bom:32.7.2')
     implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-database'
 }

@@ -26,6 +26,11 @@ import androidx.media3.session.SessionToken;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 @OptIn(markerClass = UnstableApi.class)
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private VisualizerView visualizerView;
     private MediaController mediaController;
     private ListenableFuture<MediaController> controllerFuture;
+    private DatabaseReference databaseReference;
     
     private final String RADIO_URL = "https://radio.conectarservidor.com:8016/stream";
     
@@ -59,11 +65,11 @@ public class MainActivity extends AppCompatActivity {
         // 1. Pedir permisos de notificaciones (Android 13+)
         pedirPermisoNotificaciones();
 
-        // 2. Suscribirse al canal de Firebase
-        FirebaseMessaging.getInstance().subscribeToTopic("radio_en_vivo")
-                .addOnCompleteListener(task -> {
-                    // Se ejecuta cuando la suscripción termina (opcional para debug)
-                });
+        // 2. Suscribirse al canal de Firebase (Push Notifications)
+        FirebaseMessaging.getInstance().subscribeToTopic("radio_en_vivo");
+
+        // 3. Iniciar la escucha de la Base de Datos (Nombre de la canción en tiempo real)
+        iniciarEscuchaBaseDeDatos();
 
         SessionToken sessionToken = new SessionToken(this, new ComponentName(this, PlaybackService.class));
         controllerFuture = new MediaController.Builder(this, sessionToken).buildAsync();
@@ -85,6 +91,27 @@ public class MainActivity extends AppCompatActivity {
             }
             finishAffinity();
             System.exit(0);
+        });
+    }
+
+    private void iniciarEscuchaBaseDeDatos() {
+        // Conectamos a la URL de la base de datos de tu proyecto
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://radiomixer-proyecto-default-rtdb.firebaseio.com/");
+        databaseReference = database.getReference("now_playing");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String titulo = dataSnapshot.child("titulo").getValue(String.class);
+                if (titulo != null && !titulo.isEmpty()) {
+                    runOnUiThread(() -> tvSongTitle.setText(titulo));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                runOnUiThread(() -> tvSongTitle.setText("Error al leer canción"));
+            }
         });
     }
 
@@ -163,15 +190,6 @@ public class MainActivity extends AppCompatActivity {
                         fabPlayStop.setImageResource(R.drawable.ic_play);
                         fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
                         visualizerView.stopAnimation();
-                    }
-                });
-            }
-
-            @Override
-            public void onMediaMetadataChanged(MediaMetadata mediaMetadata) {
-                runOnUiThread(() -> {
-                    if (mediaMetadata.title != null) {
-                        tvSongTitle.setText(mediaMetadata.title);
                     }
                 });
             }
