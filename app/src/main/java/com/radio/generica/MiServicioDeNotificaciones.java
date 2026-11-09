@@ -68,7 +68,8 @@ public class MiServicioDeNotificaciones extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
-                .setStyle(new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle(title).setContentText(body));
+                // Aquí corregimos el estilo para que no de error
+                .setStyle(new NotificationCompat.BigTextStyle().bigText(body));
 
         notificationManager.notify(100, builder.build());
     }
