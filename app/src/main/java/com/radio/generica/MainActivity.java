@@ -98,7 +98,20 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String titulo = dataSnapshot.child("titulo").getValue(String.class);
                 if (titulo != null && !titulo.isEmpty()) {
-                    runOnUiThread(() -> tvSongTitle.setText(titulo));
+                    runOnUiThread(() -> {
+                        tvSongTitle.setText(titulo);
+                        
+                        // Si el texto es "Fuera del aire", apagamos todo
+                        if (titulo.equalsIgnoreCase("Fuera del aire") || titulo.equalsIgnoreCase("Radio fuera del aire")) {
+                            if (mediaController != null) {
+                                mediaController.stop();
+                                mediaController.clearMediaItems();
+                            }
+                            visualizerView.stopAnimation();
+                            fabPlayStop.setImageResource(R.drawable.ic_play);
+                            fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
+                        }
+                    });
                 }
             }
             @Override
@@ -121,12 +134,11 @@ public class MainActivity extends AppCompatActivity {
                 if (mediaController != null && mediaController.isPlaying()) {
                     long currentPosition = mediaController.getCurrentPosition();
                     
-                    // Si la posición no avanza, el buffer está atascado
                     if (currentPosition == lastPosition) {
                         stuckCounter++;
-                        if (stuckCounter >= 2) { // 2 ciclos de 3 segundos = 6 segundos atascado
+                        if (stuckCounter >= 2) {
                             mediaController.stop();
-                            mediaController.clearMediaItems(); // Limpiamos la memoria a la fuerza
+                            mediaController.clearMediaItems();
                             stuckCounter = 0;
                             runOnUiThread(() -> {
                                 tvSongTitle.setText("Señal perdida");
@@ -136,14 +148,14 @@ public class MainActivity extends AppCompatActivity {
                             });
                         }
                     } else {
-                        stuckCounter = 0; // Avanzó, todo bien
+                        stuckCounter = 0;
                     }
                     lastPosition = currentPosition;
                 } else {
                     lastPosition = 0;
                     stuckCounter = 0;
                 }
-                watchdogHandler.postDelayed(this, 3000); // Revisar cada 3 segundos
+                watchdogHandler.postDelayed(this, 3000);
             }
         };
         watchdogHandler.post(watchdogRunnable);
@@ -155,7 +167,6 @@ public class MainActivity extends AppCompatActivity {
                 if (mediaController.isPlaying()) {
                     mediaController.pause();
                 } else {
-                    // Si la lista está vacía (porque el vigilante la borró), volvemos a cargar la URL
                     if (mediaController.getMediaItemCount() == 0) {
                         androidx.media3.common.MediaItem mediaItem = androidx.media3.common.MediaItem.fromUri(RADIO_URL);
                         mediaController.setMediaItem(mediaItem);
@@ -180,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
                     } else if (playbackState == Player.STATE_IDLE) {
                         progressBar.setVisibility(View.GONE);
                         fabPlayStop.setImageResource(R.drawable.ic_play);
-                        tvSongTitle.setText("Radio Detenida");
                         visualizerView.stopAnimation();
                     }
                 });

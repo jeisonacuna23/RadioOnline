@@ -19,40 +19,41 @@ public class MiServicioDeNotificaciones extends FirebaseMessagingService {
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        // Extraemos el título y el mensaje (si vienen en la notificación o en los datos)
-        String title = "¡A Voz en Cuello está EN VIVO!";
-        String body = "El programa ha comenzado. ¡Toca aquí para escuchar!";
+        String title = "A Voz en Cuello";
+        String body = "";
 
         if (remoteMessage.getNotification() != null) {
-            title = remoteMessage.getNotification().getTitle();
-            body = remoteMessage.getNotification().getBody();
+            if (remoteMessage.getNotification().getTitle() != null) title = remoteMessage.getNotification().getTitle();
+            if (remoteMessage.getNotification().getBody() != null) body = remoteMessage.getNotification().getBody();
         } else if (!remoteMessage.getData().isEmpty()) {
-            if (remoteMessage.getData().containsKey("title")) {
-                title = remoteMessage.getData().get("title");
-            }
-            if (remoteMessage.getData().containsKey("body")) {
-                body = remoteMessage.getData().get("body");
-            }
+            if (remoteMessage.getData().containsKey("title")) title = remoteMessage.getData().get("title");
+            if (remoteMessage.getData().containsKey("body")) body = remoteMessage.getData().get("body");
         }
 
+        // Verificamos si es el mensaje de "transmisión finalizada"
+        if (body.contains("La transmisión ha finalizado") || title.contains("Fuera del aire")) {
+            // Enviamos una orden al reproductor para que se detenga
+            Intent stopIntent = new Intent(this, PlaybackService.class);
+            stopIntent.setAction("STOP_PLAYBACK");
+            startService(stopIntent);
+        }
+
+        // Mostramos la notificación normal
         mostrarNotificacion(title, body);
     }
 
     private void mostrarNotificacion(String title, String body) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        // Crear el canal de notificación para Android 8.0+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     "Avisos de Transmisión",
                     NotificationManager.IMPORTANCE_HIGH
             );
-            channel.setDescription("Avisos cuando la radio comienza a transmitir");
             notificationManager.createNotificationChannel(channel);
         }
 
-        // Intent para abrir la app al tocar la notificación
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(
@@ -60,7 +61,6 @@ public class MiServicioDeNotificaciones extends FirebaseMessagingService {
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
         );
 
-        // Construir la notificación con diseño elegante
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
@@ -68,9 +68,8 @@ public class MiServicioDeNotificaciones extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
-                .setStyle(new NotificationCompat.BigTextStyle().bigText(body));
+                .setStyle(new NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle(title).setContentText(body));
 
-        // Mostrar la notificación
         notificationManager.notify(100, builder.build());
     }
 }

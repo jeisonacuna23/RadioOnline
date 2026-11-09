@@ -1,5 +1,6 @@
 package com.radio.generica;
 
+import android.content.Intent;
 import android.net.Uri;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -19,28 +20,27 @@ import androidx.media3.session.MediaSessionService;
 
 public class PlaybackService extends MediaSessionService {
     private MediaSession mediaSession = null;
+    private ExoPlayer player;
     private final String STREAM_URL = "https://radio.conectarservidor.com:8016/stream";
 
     @Override
     public void onCreate() {
         super.onCreate();
         
-        // 1. Configurar la red para que falle rápido si no hay datos
         DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory()
                 .setConnectTimeoutMs(5000)
                 .setReadTimeoutMs(5000);
 
         DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(this, httpDataSourceFactory);
 
-        // 2. Política de errores: Cero reintentos.
         LoadErrorHandlingPolicy policy = new DefaultLoadErrorHandlingPolicy() {
             @Override
             public long getRetryDelayMsFor(LoadErrorHandlingPolicy.LoadErrorInfo loadErrorInfo) {
-                return C.TIME_UNSET; // No reintentar nunca
+                return C.TIME_UNSET;
             }
         };
 
-        ExoPlayer player = new ExoPlayer.Builder(this)
+        player = new ExoPlayer.Builder(this)
                 .setMediaSourceFactory(new DefaultMediaSourceFactory(dataSourceFactory).setLoadErrorHandlingPolicy(policy))
                 .setAudioAttributes(new AudioAttributes.Builder()
                         .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
@@ -75,6 +75,17 @@ public class PlaybackService extends MediaSessionService {
                 .build();
                 
         player.setMediaItem(mediaItem);
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && "STOP_PLAYBACK".equals(intent.getAction())) {
+            if (player != null) {
+                player.stop();
+                player.clearMediaItems();
+            }
+        }
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Nullable
