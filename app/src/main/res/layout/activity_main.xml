@@ -6,43 +6,42 @@
     android:background="@drawable/bg_gradient"
     android:padding="24dp">
 
-    <!-- Encabezado / Nombre de la Emisora con fuente elegante -->
+    <!-- Encabezado / Nombre de la Emisora con fuente elegante y color morado oscuro -->
     <TextView
         android:id="@+id/tvStationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="A VOZ EN CUELLO"
-        android:textColor="#FFFFFF"
+        android:textColor="#140B14" 
         android:textSize="20sp"
         android:letterSpacing="0.15"
         android:fontFamily="@font/cinzel_bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="24dp"/>
 
-    <!-- Tarjeta con el Logo (Aumentado 30%: de 200dp a 260dp) -->
+    <!-- Tarjeta con el Logo (Aumentado a 300dp y sin padding interno) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardLogo"
-        android:layout_width="260dp"
-        android:layout_height="260dp"
-        app:cardCornerRadius="36dp"
-        app:cardElevation="20dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        app:cardCornerRadius="40dp"
+        app:cardElevation="24dp"
         app:cardBackgroundColor="#1C0E1C"
-        app:strokeColor="#FFFFFF" 
+        app:strokeColor="#140B14" 
         app:strokeWidth="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvStationName"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="16dp">
 
         <ImageView
             android:id="@+id/ivLogo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/logo"
-            android:padding="16dp"/>
+            android:src="@drawable/logo" />
     </com.google.android.material.card.MaterialCardView>
 
     <!-- Texto de la cancion actual -->
@@ -51,7 +50,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="A Voz en Cuello"
-        android:textColor="#B3FFFFFF"
+        android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:gravity="center"
         android:maxLines="2"
@@ -102,7 +101,7 @@
         app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintVertical_bias="0.5"/>
 
-    <!-- CONTENEDOR DEL VERSÍCULO (Tarjeta con diseño coherente) -->
+    <!-- CONTENEDOR DEL VERSÍCULO -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardVerse"
         android:layout_width="0dp"
