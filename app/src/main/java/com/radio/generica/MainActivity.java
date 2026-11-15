@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(() -> {
                         tvSongTitle.setText(titulo);
                         
-                        // Si el texto es "Fuera del aire", apagamos todo
                         if (titulo.equalsIgnoreCase("Fuera del aire") || titulo.equalsIgnoreCase("Radio fuera del aire")) {
                             if (mediaController != null) {
                                 mediaController.stop();
@@ -141,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
                             mediaController.clearMediaItems();
                             stuckCounter = 0;
                             runOnUiThread(() -> {
-                                tvSongTitle.setText("Señal perdida");
+                                // Cambiamos el texto al detenerse
+                                tvSongTitle.setText("A Voz en Cuello");
                                 visualizerView.stopAnimation();
                                 fabPlayStop.setImageResource(R.drawable.ic_play);
                                 fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
@@ -191,6 +191,8 @@ public class MainActivity extends AppCompatActivity {
                     } else if (playbackState == Player.STATE_IDLE) {
                         progressBar.setVisibility(View.GONE);
                         fabPlayStop.setImageResource(R.drawable.ic_play);
+                        // Cambiamos el texto al detenerse
+                        tvSongTitle.setText("A Voz en Cuello");
                         visualizerView.stopAnimation();
                     }
                 });
