@@ -97,21 +97,24 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String titulo = dataSnapshot.child("titulo").getValue(String.class);
-                if (titulo != null && !titulo.isEmpty()) {
-                    runOnUiThread(() -> {
-                        tvSongTitle.setText(titulo);
+                
+                runOnUiThread(() -> {
+                    // Si el título es nulo, está vacío o dice "Fuera del aire", volvemos al nombre de la radio
+                    if (titulo == null || titulo.isEmpty() || titulo.equalsIgnoreCase("Fuera del aire") || titulo.equalsIgnoreCase("Radio fuera del aire")) {
+                        tvSongTitle.setText("A Voz en Cuello");
                         
-                        if (titulo.equalsIgnoreCase("Fuera del aire") || titulo.equalsIgnoreCase("Radio fuera del aire")) {
-                            if (mediaController != null) {
-                                mediaController.stop();
-                                mediaController.clearMediaItems();
-                            }
+                        // Si estaba sonando, lo detenemos
+                        if (mediaController != null && mediaController.isPlaying()) {
+                            mediaController.stop();
+                            mediaController.clearMediaItems();
                             visualizerView.stopAnimation();
                             fabPlayStop.setImageResource(R.drawable.ic_play);
                             fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
                         }
-                    });
-                }
+                    } else {
+                        tvSongTitle.setText(titulo);
+                    }
+                });
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) { }
@@ -140,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                             mediaController.clearMediaItems();
                             stuckCounter = 0;
                             runOnUiThread(() -> {
-                                // Cambiamos el texto al detenerse
+                                // Si la señal se pierde, volvemos al nombre de la radio
                                 tvSongTitle.setText("A Voz en Cuello");
                                 visualizerView.stopAnimation();
                                 fabPlayStop.setImageResource(R.drawable.ic_play);
@@ -191,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                     } else if (playbackState == Player.STATE_IDLE) {
                         progressBar.setVisibility(View.GONE);
                         fabPlayStop.setImageResource(R.drawable.ic_play);
-                        // Cambiamos el texto al detenerse
+                        // Si el reproductor queda inactivo, volvemos al nombre de la radio
                         tvSongTitle.setText("A Voz en Cuello");
                         visualizerView.stopAnimation();
                     }

@@ -6,7 +6,6 @@
     android:background="@drawable/bg_gradient"
     android:padding="24dp">
 
-    <!-- Encabezado / Nombre de la Emisora con fuente elegante y color morado oscuro -->
     <TextView
         android:id="@+id/tvStationName"
         android:layout_width="wrap_content"
@@ -21,16 +20,18 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="24dp"/>
 
-    <!-- Tarjeta con el Logo (Aumentado a 300dp y sin padding interno) -->
+    <!-- Logo dinámico al 85% del ancho de la pantalla -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardLogo"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:cardCornerRadius="40dp"
         app:cardElevation="24dp"
         app:cardBackgroundColor="#1C0E1C"
         app:strokeColor="#140B14" 
         app:strokeWidth="2dp"
+        app:layout_constraintWidth_percent="0.85"
+        app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvStationName"
@@ -44,7 +45,6 @@
             android:src="@drawable/logo" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Texto de la cancion actual -->
     <TextView
         android:id="@+id/tvSongTitle"
         android:layout_width="0dp"
@@ -62,7 +62,6 @@
         android:layout_marginTop="16dp"
         android:layout_marginHorizontal="24dp"/>
 
-    <!-- Espectro de Audio -->
     <com.radio.generica.VisualizerView
         android:id="@+id/visualizer"
         android:layout_width="160dp"
@@ -72,7 +71,6 @@
         app:layout_constraintTop_toBottomOf="@id/tvSongTitle"
         android:layout_marginTop="8dp"/>
 
-    <!-- Rueda de carga -->
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="wrap_content"
@@ -84,7 +82,6 @@
         app:layout_constraintTop_toBottomOf="@id/visualizer"
         android:layout_marginTop="16dp"/>
 
-    <!-- Boton Principal de Play/Stop -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPlayStop"
         android:layout_width="wrap_content"
@@ -101,16 +98,14 @@
         app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintVertical_bias="0.5"/>
 
-    <!-- CONTENEDOR DEL VERSÍCULO -->
+    <!-- Contenedor del versículo BLANCO con letras moradas -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardVerse"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
         app:cardElevation="8dp"
-        app:cardBackgroundColor="#2A1A2A"
-        app:strokeColor="#33FFFFFF"
-        app:strokeWidth="1dp"
+        app:cardBackgroundColor="#FFFFFF"
         app:layout_constraintBottom_toTopOf="@id/btnExit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -122,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Clama a voz en cuello, no te detengas;\nalza tu voz como trompeta.\nIsaías 58:1"
-            android:textColor="#E0E0E0"
+            android:textColor="#140B14"
             android:textSize="14sp"
             android:gravity="center"
             android:fontFamily="@font/cinzel_regular"
@@ -130,7 +125,6 @@
             android:padding="16dp" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Boton de Apagar y Salir -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnExit"
         android:layout_width="wrap_content"
