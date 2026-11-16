@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="24dp"/>
 
-    <!-- Logo (Reducido un 8% y subido, sin borde duro) -->
+    <!-- Logo -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardLogo"
         android:layout_width="0dp"
@@ -59,7 +59,7 @@
         app:layout_constraintTop_toBottomOf="@id/cardLogo"
         android:layout_marginTop="16dp"/>
 
-    <!-- Nombre de la canción (Espacio reservado para 2 líneas para no mover el botón) -->
+    <!-- Nombre de la canción -->
     <TextView
         android:id="@+id/tvSongTitle"
         android:layout_width="0dp"
@@ -78,7 +78,7 @@
         android:layout_marginTop="4dp"
         android:layout_marginHorizontal="16dp"/>
 
-    <!-- Espectro de Audio (Devuelto a su tamaño original) -->
+    <!-- Espectro de Audio -->
     <com.radio.generica.VisualizerView
         android:id="@+id/visualizer"
         android:layout_width="160dp"
@@ -116,28 +116,28 @@
         app:layout_constraintTop_toBottomOf="@id/progressBar"
         android:layout_marginTop="24dp"/>
 
-    <!-- Cita Bíblica (Lavanda claro, sin tarjeta) -->
+    <!-- Cita Bíblica con MUCHO más protagonismo -->
     <TextView
         android:id="@+id/tvVerse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Isaías 58:1"
-        android:textColor="#D4C4E0"
-        android:textSize="14sp"
-        android:letterSpacing="0.1"
+        android:textColor="#FFFFFF"
+        android:textSize="22sp"
+        android:letterSpacing="0.15"
         android:fontFamily="@font/montserrat_bold"
         app:layout_constraintBottom_toTopOf="@id/btnExit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="24dp"/>
 
-    <!-- Botón de Apagar y Salir (Discreto, lavanda) -->
+    <!-- Botón de Apagar y Salir -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnExit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="APAGAR Y SALIR"
-        android:textColor="#D4C4E0"
+        android:textColor="#664C68"
         android:textSize="12sp"
         android:fontFamily="sans-serif-medium"
         app:backgroundTint="#00000000"
