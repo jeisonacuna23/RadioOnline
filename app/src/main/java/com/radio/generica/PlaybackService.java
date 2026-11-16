@@ -27,16 +27,18 @@ public class PlaybackService extends MediaSessionService {
     public void onCreate() {
         super.onCreate();
         
+        // 1. Configurar la red (Mantenido para evitar el bucle)
         DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory()
                 .setConnectTimeoutMs(5000)
                 .setReadTimeoutMs(5000);
 
         DefaultDataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(this, httpDataSourceFactory);
 
+        // 2. Política de errores: Cero reintentos (Mantenido)
         LoadErrorHandlingPolicy policy = new DefaultLoadErrorHandlingPolicy() {
             @Override
             public long getRetryDelayMsFor(LoadErrorHandlingPolicy.LoadErrorInfo loadErrorInfo) {
-                return C.TIME_UNSET;
+                return C.TIME_UNSET; 
             }
         };
 
@@ -63,6 +65,7 @@ public class PlaybackService extends MediaSessionService {
                 .setId("RadioOnlineSession")
                 .build();
                 
+        // 3. RESTAURADO: Configuración de la carátula y textos de la notificación
         Uri artworkUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.logo);
         
         MediaItem mediaItem = new MediaItem.Builder()
