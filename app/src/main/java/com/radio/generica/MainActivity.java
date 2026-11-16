@@ -99,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
                 String titulo = dataSnapshot.child("titulo").getValue(String.class);
                 
                 runOnUiThread(() -> {
-                    // Si el título es nulo o vacío, muestra "Esperando información..."
                     if (titulo == null || titulo.isEmpty() || titulo.equalsIgnoreCase("Fuera del aire") || titulo.equalsIgnoreCase("Radio fuera del aire")) {
                         tvSongTitle.setText("Esperando información...");
                         
@@ -133,30 +132,33 @@ public class MainActivity extends AppCompatActivity {
         watchdogRunnable = new Runnable() {
             @Override
             public void run() {
-                if (mediaController != null && mediaController.isPlaying()) {
-                    long currentPosition = mediaController.getCurrentPosition();
-                    
-                    if (currentPosition == lastPosition) {
-                        stuckCounter++;
-                        if (stuckCounter >= 2) {
-                            mediaController.stop();
-                            mediaController.clearMediaItems();
+                if (mediaController != null) {
+                    // EL ARREGLO ESTÁ AQUÍ: Revisa si está reproduciendo O si está en estado de carga
+                    if (mediaController.isPlaying() || mediaController.getPlaybackState() == Player.STATE_BUFFERING) {
+                        long currentPosition = mediaController.getCurrentPosition();
+                        
+                        if (currentPosition == lastPosition) {
+                            stuckCounter++;
+                            if (stuckCounter >= 2) { // Si pasan 6 segundos (3s x 2) atascado
+                                mediaController.stop();
+                                mediaController.clearMediaItems();
+                                stuckCounter = 0;
+                                runOnUiThread(() -> {
+                                    tvSongTitle.setText("Esperando información...");
+                                    visualizerView.stopAnimation();
+                                    fabPlayStop.setImageResource(R.drawable.ic_play);
+                                    fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                                    fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14")));
+                                });
+                            }
+                        } else {
                             stuckCounter = 0;
-                            runOnUiThread(() -> {
-                                tvSongTitle.setText("Esperando información...");
-                                visualizerView.stopAnimation();
-                                fabPlayStop.setImageResource(R.drawable.ic_play);
-                                fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
-                                fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14")));
-                            });
                         }
+                        lastPosition = currentPosition;
                     } else {
+                        lastPosition = 0;
                         stuckCounter = 0;
                     }
-                    lastPosition = currentPosition;
-                } else {
-                    lastPosition = 0;
-                    stuckCounter = 0;
                 }
                 watchdogHandler.postDelayed(this, 3000);
             }
