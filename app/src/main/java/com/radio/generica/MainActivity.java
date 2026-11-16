@@ -99,16 +99,17 @@ public class MainActivity extends AppCompatActivity {
                 String titulo = dataSnapshot.child("titulo").getValue(String.class);
                 
                 runOnUiThread(() -> {
+                    // Si el título es nulo o vacío, muestra "Esperando información..."
                     if (titulo == null || titulo.isEmpty() || titulo.equalsIgnoreCase("Fuera del aire") || titulo.equalsIgnoreCase("Radio fuera del aire")) {
-                        tvSongTitle.setText("A Voz en Cuello");
+                        tvSongTitle.setText("Esperando información...");
                         
                         if (mediaController != null && mediaController.isPlaying()) {
                             mediaController.stop();
                             mediaController.clearMediaItems();
                             visualizerView.stopAnimation();
                             fabPlayStop.setImageResource(R.drawable.ic_play);
-                            fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF"))); // Fondo Blanco
-                            fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14"))); // Ícono Morado
+                            fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF"))); 
+                            fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14"))); 
                         }
                     } else {
                         tvSongTitle.setText(titulo);
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                             mediaController.clearMediaItems();
                             stuckCounter = 0;
                             runOnUiThread(() -> {
-                                tvSongTitle.setText("A Voz en Cuello");
+                                tvSongTitle.setText("Esperando información...");
                                 visualizerView.stopAnimation();
                                 fabPlayStop.setImageResource(R.drawable.ic_play);
                                 fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
@@ -193,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
                     } else if (playbackState == Player.STATE_IDLE) {
                         progressBar.setVisibility(View.GONE);
                         fabPlayStop.setImageResource(R.drawable.ic_play);
-                        tvSongTitle.setText("A Voz en Cuello");
+                        tvSongTitle.setText("Esperando información...");
                         visualizerView.stopAnimation();
                     }
                 });
@@ -204,13 +205,11 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if (isPlaying) {
                         fabPlayStop.setImageResource(R.drawable.ic_pause);
-                        // Cuando está sonando: Fondo Morado Oscuro, ícono Blanco
                         fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#140B14")));
                         fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
                         visualizerView.startAnimation();
                     } else {
                         fabPlayStop.setImageResource(R.drawable.ic_play);
-                        // Cuando está pausado: Fondo Blanco, ícono Morado
                         fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
                         fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14")));
                         visualizerView.stopAnimation();

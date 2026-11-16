@@ -19,9 +19,9 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="32dp"/>
+        android:layout_marginTop="24dp"/>
 
-    <!-- Logo flotante (Tarjeta suave sin borde duro) -->
+    <!-- Logo (Reducido un 8% y subido, sin borde duro) -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardLogo"
         android:layout_width="0dp"
@@ -29,14 +29,12 @@
         app:cardCornerRadius="32dp"
         app:cardElevation="16dp"
         app:cardBackgroundColor="#1C0E1C"
-        app:layout_constraintWidth_percent="0.8"
+        app:layout_constraintWidth_percent="0.72"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvStationName"
-        app:layout_constraintBottom_toTopOf="@id/tvSongTitle"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="32dp">
+        android:layout_marginTop="12dp">
 
         <ImageView
             android:id="@+id/ivLogo"
@@ -46,33 +44,49 @@
             android:src="@drawable/logo" />
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- Nombre de la canción -->
+    <!-- Etiqueta discreta -->
+    <TextView
+        android:id="@+id/tvNowPlayingLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="REPRODUCIENDO AHORA"
+        android:textColor="#80FFFFFF"
+        android:textSize="10sp"
+        android:letterSpacing="0.15"
+        android:fontFamily="sans-serif-medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardLogo"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Nombre de la canción (Espacio reservado para 2 líneas para no mover el botón) -->
     <TextView
         android:id="@+id/tvSongTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="A Voz en Cuello"
+        android:minHeight="48dp"
+        android:text="Esperando información..."
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:gravity="center"
         android:maxLines="2"
         android:ellipsize="end"
         android:fontFamily="sans-serif-medium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/visualizer"
-        android:layout_marginBottom="8dp"
+        app:layout_constraintTop_toBottomOf="@id/tvNowPlayingLabel"
+        android:layout_marginTop="4dp"
         android:layout_marginHorizontal="16dp"/>
 
-    <!-- Espectro de Audio -->
+    <!-- Espectro de Audio (Devuelto a su tamaño original) -->
     <com.radio.generica.VisualizerView
         android:id="@+id/visualizer"
-        android:layout_width="140dp"
-        android:layout_height="30dp"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/fabPlayStop"
-        android:layout_marginBottom="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/tvSongTitle"
+        android:layout_marginTop="8dp"/>
 
     <!-- Rueda de carga -->
     <ProgressBar
@@ -83,10 +97,10 @@
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/fabPlayStop"
-        android:layout_marginBottom="16dp"/>
+        app:layout_constraintTop_toBottomOf="@id/visualizer"
+        android:layout_marginTop="8dp"/>
 
-    <!-- Botón de Play principal (Blanco con ícono morado) -->
+    <!-- Botón de Play principal -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPlayStop"
         android:layout_width="wrap_content"
@@ -99,31 +113,31 @@
         app:elevation="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/tvVerse"
-        android:layout_marginBottom="24dp"/>
+        app:layout_constraintTop_toBottomOf="@id/progressBar"
+        android:layout_marginTop="24dp"/>
 
-    <!-- Cita Bíblica (Solo texto, sin fondo) -->
+    <!-- Cita Bíblica (Lavanda claro, sin tarjeta) -->
     <TextView
         android:id="@+id/tvVerse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Isaías 58:1"
-        android:textColor="#80FFFFFF"
+        android:textColor="#D4C4E0"
         android:textSize="14sp"
         android:letterSpacing="0.1"
         android:fontFamily="@font/montserrat_bold"
+        app:layout_constraintBottom_toTopOf="@id/btnExit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/btnExit"
-        android:layout_marginBottom="8dp"/>
+        android:layout_marginBottom="16dp"/>
 
-    <!-- Botón de Apagar y Salir -->
+    <!-- Botón de Apagar y Salir (Discreto, lavanda) -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnExit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="APAGAR Y SALIR"
-        android:textColor="#80FF5252"
+        android:textColor="#D4C4E0"
         android:textSize="12sp"
         android:fontFamily="sans-serif-medium"
         app:backgroundTint="#00000000"
