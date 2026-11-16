@@ -99,17 +99,16 @@ public class MainActivity extends AppCompatActivity {
                 String titulo = dataSnapshot.child("titulo").getValue(String.class);
                 
                 runOnUiThread(() -> {
-                    // Si el título es nulo, está vacío o dice "Fuera del aire", volvemos al nombre de la radio
                     if (titulo == null || titulo.isEmpty() || titulo.equalsIgnoreCase("Fuera del aire") || titulo.equalsIgnoreCase("Radio fuera del aire")) {
                         tvSongTitle.setText("A Voz en Cuello");
                         
-                        // Si estaba sonando, lo detenemos
                         if (mediaController != null && mediaController.isPlaying()) {
                             mediaController.stop();
                             mediaController.clearMediaItems();
                             visualizerView.stopAnimation();
                             fabPlayStop.setImageResource(R.drawable.ic_play);
-                            fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
+                            fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF"))); // Fondo Blanco
+                            fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14"))); // Ícono Morado
                         }
                     } else {
                         tvSongTitle.setText(titulo);
@@ -143,11 +142,11 @@ public class MainActivity extends AppCompatActivity {
                             mediaController.clearMediaItems();
                             stuckCounter = 0;
                             runOnUiThread(() -> {
-                                // Si la señal se pierde, volvemos al nombre de la radio
                                 tvSongTitle.setText("A Voz en Cuello");
                                 visualizerView.stopAnimation();
                                 fabPlayStop.setImageResource(R.drawable.ic_play);
-                                fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
+                                fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                                fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14")));
                             });
                         }
                     } else {
@@ -194,7 +193,6 @@ public class MainActivity extends AppCompatActivity {
                     } else if (playbackState == Player.STATE_IDLE) {
                         progressBar.setVisibility(View.GONE);
                         fabPlayStop.setImageResource(R.drawable.ic_play);
-                        // Si el reproductor queda inactivo, volvemos al nombre de la radio
                         tvSongTitle.setText("A Voz en Cuello");
                         visualizerView.stopAnimation();
                     }
@@ -206,11 +204,15 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if (isPlaying) {
                         fabPlayStop.setImageResource(R.drawable.ic_pause);
-                        fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#D32F2F")));
+                        // Cuando está sonando: Fondo Morado Oscuro, ícono Blanco
+                        fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#140B14")));
+                        fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
                         visualizerView.startAnimation();
                     } else {
                         fabPlayStop.setImageResource(R.drawable.ic_play);
-                        fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#331A33")));
+                        // Cuando está pausado: Fondo Blanco, ícono Morado
+                        fabPlayStop.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#FFFFFF")));
+                        fabPlayStop.setImageTintList(ColorStateList.valueOf(Color.parseColor("#140B14")));
                         visualizerView.stopAnimation();
                     }
                 });

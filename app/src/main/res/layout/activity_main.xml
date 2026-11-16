@@ -6,13 +6,14 @@
     android:background="@drawable/bg_gradient"
     android:padding="24dp">
 
+    <!-- Título (Blanco para contrastar con el fondo morado de arriba) -->
     <TextView
         android:id="@+id/tvStationName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="A VOZ EN CUELLO"
-        android:textColor="#140B14" 
-        android:textSize="20sp"
+        android:textColor="#FFFFFF" 
+        android:textSize="22sp"
         android:letterSpacing="0.15"
         android:fontFamily="@font/cinzel_bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginTop="24dp"/>
 
-    <!-- Logo dinámico al 85% del ancho de la pantalla -->
+    <!-- Logo gigante con borde blanco -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardLogo"
         android:layout_width="0dp"
@@ -28,7 +29,7 @@
         app:cardCornerRadius="40dp"
         app:cardElevation="24dp"
         app:cardBackgroundColor="#1C0E1C"
-        app:strokeColor="#140B14" 
+        app:strokeColor="#FFFFFF" 
         app:strokeWidth="2dp"
         app:layout_constraintWidth_percent="0.85"
         app:layout_constraintDimensionRatio="1:1"
@@ -45,6 +46,7 @@
             android:src="@drawable/logo" />
     </com.google.android.material.card.MaterialCardView>
 
+    <!-- Nombre de la canción -->
     <TextView
         android:id="@+id/tvSongTitle"
         android:layout_width="0dp"
@@ -82,30 +84,33 @@
         app:layout_constraintTop_toBottomOf="@id/visualizer"
         android:layout_marginTop="16dp"/>
 
+    <!-- Botón de Play (Fondo Blanco, ícono Morado) -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabPlayStop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_play"
-        app:backgroundTint="#331A33"
-        app:tint="#FFFFFF"
+        app:backgroundTint="#FFFFFF"
+        app:tint="#140B14"
         app:fabSize="normal"
-        app:maxImageSize="36dp"
-        app:elevation="16dp"
+        app:maxImageSize="40dp"
+        app:elevation="20dp"
         app:layout_constraintBottom_toTopOf="@id/cardVerse"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/progressBar"
         app:layout_constraintVertical_bias="0.5"/>
 
-    <!-- Contenedor del versículo BLANCO con letras moradas -->
+    <!-- Contenedor del versículo con estilo 3D -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardVerse"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="8dp"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="24dp"
         app:cardBackgroundColor="#FFFFFF"
+        app:strokeColor="#140B14"
+        app:strokeWidth="2dp"
         app:layout_constraintBottom_toTopOf="@id/btnExit"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -118,11 +123,11 @@
             android:layout_height="wrap_content"
             android:text="Clama a voz en cuello, no te detengas;\nalza tu voz como trompeta.\nIsaías 58:1"
             android:textColor="#140B14"
-            android:textSize="14sp"
+            android:textSize="18sp"
             android:gravity="center"
-            android:fontFamily="@font/cinzel_regular"
-            android:lineSpacingExtra="6dp"
-            android:padding="16dp" />
+            android:fontFamily="@font/montserrat_bold"
+            android:lineSpacingExtra="8dp"
+            android:padding="20dp" />
     </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.button.MaterialButton
@@ -130,7 +135,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="APAGAR Y SALIR"
-        android:textColor="#FF5252"
+        android:textColor="#140B14"
         android:fontFamily="sans-serif-medium"
         app:backgroundTint="#00000000"
         app:cornerRadius="20dp"
