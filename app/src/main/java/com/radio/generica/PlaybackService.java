@@ -17,6 +17,7 @@ import androidx.media3.exoplayer.upstream.DefaultLoadErrorHandlingPolicy;
 import androidx.media3.exoplayer.upstream.LoadErrorHandlingPolicy;
 import androidx.media3.session.MediaSession;
 import androidx.media3.session.MediaSessionService;
+import androidx.media3.session.DefaultMediaNotificationProvider; // IMPORTANTE
 
 public class PlaybackService extends MediaSessionService {
     private MediaSession mediaSession = null;
@@ -27,6 +28,11 @@ public class PlaybackService extends MediaSessionService {
     public void onCreate() {
         super.onCreate();
         
+        // EL ARREGLO PARA EL MOTOROLA: Forzar la notificación personalizada
+        DefaultMediaNotificationProvider notificationProvider = new DefaultMediaNotificationProvider(this);
+        notificationProvider.setSmallIcon(R.drawable.ic_notification);
+        setMediaNotificationProvider(notificationProvider);
+
         // 1. Configurar la red (Mantenido para evitar el bucle)
         DefaultHttpDataSource.Factory httpDataSourceFactory = new DefaultHttpDataSource.Factory()
                 .setConnectTimeoutMs(5000)
@@ -65,7 +71,7 @@ public class PlaybackService extends MediaSessionService {
                 .setId("RadioOnlineSession")
                 .build();
                 
-        // 3. RESTAURADO: Configuración de la carátula y textos de la notificación
+        // 3. Configuración de la carátula y textos de la notificación
         Uri artworkUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.logo);
         
         MediaItem mediaItem = new MediaItem.Builder()
